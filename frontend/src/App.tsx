@@ -1,35 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import "./App.css";
+
+import { WidgetRenderer } from "./components/WidgetRenderer";
+import { mockDataset } from "./data/mock/dataset";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const widget = {
+    id: "table-1",
+    type: "table",
+    title: "Open Pull Requests",
+    query: {
+      entity: "pull_request",
+      filter: {
+        field: "state",
+        op: "neq",
+        value: "open",
+      },
+      sort: [{ field: "createdAt", dir: "desc" }],
+      limit: 10,
+      offset: 0,
+    },
+    columns: [
+      { field: "id", label: "ID" },
+      { field: "title", label: "Title" },
+      { field: "author", label: "Author" },
+      { field: "repo", label: "Repo" },
+      { field: "state", label: "State" },
+      { field: "createdAt", label: "Created" },
+    ],
+  };
+
+  const prByRepoDoughnut = {
+    id: "d1",
+    type: "doughnut",
+    title: "Open PRs by Repo",
+    query: {
+      entity: "pull_request",
+      filter: { field: "state", op: "eq", value: "open" },
+    },
+    groupByField: "repo",
+    topN: 6,
+  };
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div style={{ display: "grid", gap: 12 }}>
+        <WidgetRenderer widget={widget} data={mockDataset} />
+        <WidgetRenderer widget={prByRepoDoughnut} data={mockDataset} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
